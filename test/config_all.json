@@ -1,0 +1,7 @@
+{
+    "urls": [
+        "https://example.com"
+    ],
+    "storeDir": "./test/tmp",
+    "skipAudits": []
+}

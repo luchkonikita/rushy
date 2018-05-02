@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noStrictGenericChecks": true,
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "module": "commonjs",
+    "outDir": "dest",
+    "baseUrl": "src",
+    "allowJs": false,
+    "target": "es2017",
+    "lib": [
+      "esnext.asynciterable",
+      "es2017",
+      "dom"
+    ]
+  },
+  "exclude": [
+    "dest",
+    "node_modules",
+    "scripts"
+  ]
+}
