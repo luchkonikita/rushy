@@ -11,7 +11,7 @@
     "test": "rm -rf ./test/tmp && rm -rf ./dest && tsc && ava"
   },
   "bin": {
-    "rushy": "./dest/index.js"
+    "rushy": "./dest/src/index.js"
   },
   "devDependencies": {
     "@types/csv-stringify": "^1.4.2",
