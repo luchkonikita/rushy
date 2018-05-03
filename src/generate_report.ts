@@ -11,7 +11,7 @@ export default async function generateReport(configFile: string, destFileName: s
 
   const config = new Config(configFile)
   const writer = new CSVWriter(config)
-  const chrome = await chromeLauncher.launch(config.chromeOpts)
+  const chrome = await chromeLauncher.launch({ ...config.chromeOpts })
 
   // Ensure Chrome is closed
   process.on('SIGINT', async () => {

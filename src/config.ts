@@ -32,7 +32,6 @@ export default class Config {
   private config: any
 
   constructor(configFile) {
-    console.info(configFile)
     const userConfig = JSON.parse(fs.readFileSync(configFile).toString())
     this.config = { ...DEFAULT_CONFIG, ...userConfig }
   }
@@ -57,7 +56,7 @@ export default class Config {
 
   get chromeOpts() {
     return {
-      chromeFlags: ['--show-paint-rects', '--headless']
+      chromeFlags: ['--disable-gpu', '--show-paint-rects', '--headless', '--no-sandbox']
     }
   }
 
