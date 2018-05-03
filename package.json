@@ -1,6 +1,6 @@
 {
   "name": "rushy",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "main": "dest/index.js",
   "author": "Nikita Luchko",
   "license": "MIT",
@@ -14,6 +14,9 @@
     "rushy": "./dest/src/index.js"
   },
   "devDependencies": {
+    "@types/inflection": "^1.5.28",
+    "@types/optimist": "^0.0.29",
+    "@types/ora": "^1.3.4",
     "@types/csv-stringify": "^1.4.2",
     "@types/node": "^9.4.0",
     "@types/sinon": "^4.1.3",
@@ -24,9 +27,6 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "@types/inflection": "^1.5.28",
-    "@types/optimist": "^0.0.29",
-    "@types/ora": "^1.3.4",
     "chrome-launcher": "^0.10.2",
     "csv-stringify": "^3.0.0",
     "inflection": "^1.12.0",

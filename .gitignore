@@ -10,7 +10,7 @@ npm-debug.log*
 node_modules
 .npm
 .DS_Store
-dest
 tmp
 test/tmp
 config.json
+dest

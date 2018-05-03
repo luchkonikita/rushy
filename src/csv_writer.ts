@@ -24,7 +24,7 @@ export default class CSVWriter {
     if (!fs.existsSync(storeDir)) fs.mkdirSync(storeDir)
     const fileName = path.join(storeDir, destFileName)
     fs.writeFileSync(fileName, csv)
-    return path.join(__dirname, fileName)
+    return path.join(process.cwd(), fileName)
   }
 
   get header(): string[] {
