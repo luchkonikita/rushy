@@ -1,22 +1,6 @@
 import { getLighthouseReport } from './lighthouse'
 import Config from './config'
 
-interface IAudit {
-  name: string
-  rawValue: number | boolean
-}
-
-export interface IAuditReport {
-  'time-to-first-byte'?: number
-  'first-meaningful-paint'?: number
-  'first-interactive'?: number
-  'consistently-interactive'?: number
-  'total-byte-weight'?: number
-  'speed-index-metric'?: number
-}
-
-export type ReportsList = { [index: string]: IAuditReport }
-
 export default class Runner {
   private config: Config
 

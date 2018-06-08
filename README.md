@@ -22,13 +22,14 @@ Configuration .json file should look like:
 
 ```
 {
-  "urls": [
-    "https://example.com"
-  ],
+  "urls": ["http://example.com"],
   "storeDir": "./reports",
-  "skipAudits": []
+  "skipAudits": ["speed-index-metric"],
+  "reporter": "html"
 }
 ```
+
+Available reporters are `csv` and `html`.
 
 Make sure to provide configuration suitable for your needs.
 

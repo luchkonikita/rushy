@@ -3,14 +3,17 @@ import * as ora from 'ora'
 import { inflect } from 'inflection'
 
 import Config from './config'
-import CSVWriter from './csv_writer'
-import Runner, { ReportsList } from './runner'
+import CSVReporter from './reporters/csv'
+import HTMLReporter from './reporters/html'
+import Runner from './runner'
 
 export default async function generateReport(configFile: string, destFileName: string) {
   const spinner = ora('Lauching Chrome').start()
 
   const config = new Config(configFile)
-  const writer = new CSVWriter(config)
+  const reporter = config.reporter === 'csv'
+    ? new CSVReporter(config)
+    : new HTMLReporter(config)
   const chrome = await chromeLauncher.launch({ ...config.chromeOpts })
 
   // Ensure Chrome is closed
@@ -47,7 +50,7 @@ export default async function generateReport(configFile: string, destFileName: s
   await chrome.kill()
 
   spinner.text = 'Saving report'
-  const reportFileName = writer.write(report, destFileName)
+  const reportFileName = reporter.write(report, `${destFileName}.${reporter.ext}`)
 
   spinner.stopAndPersist({
     symbol: '⚡️',
