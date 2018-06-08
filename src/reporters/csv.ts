@@ -1,18 +1,8 @@
-import * as fs from 'fs'
-import * as path from 'path'
 import * as stringifyCSV from 'csv-stringify/lib/sync'
 import { humanize } from 'inflection'
+import BaseReporter from './base_reporter'
 
-import Config from './config'
-import { ReportsList } from './runner'
-
-export default class CSVWriter {
-  private config: Config
-
-  constructor(config: Config) {
-    this.config = config
-  }
-
+export default class CSVReporter extends BaseReporter implements Reporter {
   write(report: ReportsList, destFileName: string): string {
     const rows = Object.keys(report).map(url => {
       const results = this.config.auditKeys.map(key => report[url][key])
@@ -20,14 +10,14 @@ export default class CSVWriter {
     })
     const csv = stringifyCSV([this.header].concat(rows), { header: true })
 
-    const { storeDir } = this.config
-    if (!fs.existsSync(storeDir)) fs.mkdirSync(storeDir)
-    const fileName = path.join(storeDir, destFileName)
-    fs.writeFileSync(fileName, csv)
-    return path.join(process.cwd(), fileName)
+    return this.writeReport(csv, destFileName)
   }
 
-  get header(): string[] {
+  private get header(): string[] {
     return ['Page'].concat(this.config.auditKeys.map(k => humanize(k.split('-').join(' ')))) // Header row
+  }
+
+  get ext(): string {
+    return 'csv'
   }
 }

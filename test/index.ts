@@ -45,7 +45,7 @@ test.afterEach(t => {
 
 test.serial('generate report', async t => {
   await generateReport('./test/config_all.json', 'report_all')
-  const csv = fs.readFileSync('test/tmp/report_all').toString()
+  const csv = fs.readFileSync('test/tmp/report_all.csv').toString()
 
   const expectedCsv = [
     'Page,Time to first byte,First meaningful paint,First interactive,Consistently interactive,Total byte weight,Speed index metric',
@@ -59,7 +59,7 @@ test.serial('generate report', async t => {
 
 test.serial('generate report with skipped audits', async t => {
   await generateReport('./test/config_skipped.json', 'report_skipped')
-  const csv = fs.readFileSync('test/tmp/report_skipped').toString()
+  const csv = fs.readFileSync('test/tmp/report_skipped.csv').toString()
 
   const expectedCsv = [
     'Page,First meaningful paint,Total byte weight,Speed index metric',
@@ -68,4 +68,12 @@ test.serial('generate report with skipped audits', async t => {
   ].join('\n')
 
   t.is(csv, expectedCsv)
+})
+
+test.serial('generate report with html reporter', async t => {
+  await generateReport('./test/config_html.json', 'report_html')
+  const html = fs.readFileSync('test/tmp/report_html.html').toString()
+
+  t.true(html.includes('<th>Time to first byte</th>'))
+  t.true(html.includes('<td>time-to-first-byte value</td>'))
 })

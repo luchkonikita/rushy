@@ -1,6 +1,6 @@
 {
   "name": "rushy",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dest/index.js",
   "author": "Nikita Luchko",
   "license": "MIT",
@@ -8,17 +8,17 @@
     "dev": "ts-node src/index.ts",
     "lint": "tslint --project ./",
     "build": "rm -rf ./dest && tsc",
-    "test": "rm -rf ./test/tmp && rm -rf ./dest && tsc && ava"
+    "test": "yarn build && rm -rf test/tmp/* && ava"
   },
   "bin": {
     "rushy": "./dest/src/index.js"
   },
   "devDependencies": {
+    "@types/csv-stringify": "^1.4.2",
     "@types/inflection": "^1.5.28",
+    "@types/node": "^9.4.0",
     "@types/optimist": "^0.0.29",
     "@types/ora": "^1.3.4",
-    "@types/csv-stringify": "^1.4.2",
-    "@types/node": "^9.4.0",
     "@types/sinon": "^4.1.3",
     "ava": "^0.25.0",
     "sinon": "^4.2.2",
@@ -27,12 +27,14 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
+    "@types/pug": "^2.0.4",
     "chrome-launcher": "^0.10.2",
     "csv-stringify": "^3.0.0",
     "inflection": "^1.12.0",
     "lighthouse": "^2.9.4",
     "optimist": "^0.6.1",
-    "ora": "^2.1.0"
+    "ora": "^2.1.0",
+    "pug": "^2.0.3"
   },
   "ava": {
     "files": [

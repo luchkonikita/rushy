@@ -15,17 +15,21 @@ const DEFAULT_CONFIG = {
 }
 
 /*
-  @example
-
-  Expects a .json file with fields like:
-  ```
-  {
-    "urls": ["http://example.com"],
-    "storeDir": "./reports",
-    "skipAudits": ["speed-index-metric"]
-  }
-  ```
-*/
+ * @example
+ *
+ * Expects a .json file with fields like:
+ * ```
+ *   {
+ *    "urls": ["http://example.com"],
+ *    "storeDir": "./reports",
+ *    "skipAudits": ["speed-index-metric"],
+ *    "reporter": "html"
+ *   }
+ * ```
+ *
+ * Note that the default reporter is `csv`.
+ *
+ */
 
 export default class Config {
   chromePort: number
@@ -60,7 +64,11 @@ export default class Config {
     }
   }
 
-  get storeDir() {
+  get reporter(): 'csv' | 'html' {
+    return this.config.reporter || 'csv'
+  }
+
+  get storeDir(): string {
     return this.config.storeDir
   }
 }

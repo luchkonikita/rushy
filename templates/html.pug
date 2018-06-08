@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title Performance Report
+    style
+      include style.css
+
+  body
+    h1 Performance Report
+
+    table
+      thead
+        tr
+          for item in header
+            th
+              = item
+
+      tbody
+        for row in rows
+          tr
+            for item in row
+              td
+                = item
