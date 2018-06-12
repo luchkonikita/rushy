@@ -3,6 +3,7 @@ import * as fs from 'fs'
 const DEFAULT_CONFIG = {
   reporter: 'csv',
   storeDir: 'tmp',
+  logger: 'inline',
   concurrency: 1,
   reportQuery: {
     'Score': '$.reportCategories[0].score',
@@ -24,6 +25,7 @@ const DEFAULT_CONFIG = {
  *   {
  *     "urls": ["http://example.com"],
  *     "storeDir": "./reports",
+ *     "logger": "inline",
  *     "reporter": "html",
  *     "reportQuery": {
  *       "Time to First Byte": "$.audits['time-to-first-byte'].rawValue"
@@ -35,6 +37,9 @@ const DEFAULT_CONFIG = {
  * `urls` - the list of pages to run audits on.
  * `storeDir` - the directory for storing reports.
  * `concurrency` - the number of Chrome/Lighthouse processes to launch simultaneously.
+ * `logger` - progress logger to use.
+ *   - `inline` works as a spinner with current status.
+ *   - `serial` just logs steps line by line (suitable for CI logs, for example).
  * `reporter` - sets the report format. Can be `html` or `csv`.
  * `reportQuery` - options allows you to specify custom query against lighthouse results. Suitable for advanced usage.
  *
@@ -73,6 +78,10 @@ export default class Config {
 
   get concurrency(): number {
     return this.config.concurrency
+  }
+
+  get logger(): 'inline' | 'serial' {
+    return this.config.logger
   }
 
   get reporter(): 'csv' | 'html' {

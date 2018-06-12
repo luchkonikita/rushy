@@ -28,6 +28,7 @@
   "dependencies": {
     "@types/jsonpath": "^0.2.0",
     "@types/pug": "^2.0.4",
+    "chalk": "^2.4.1",
     "chrome-launcher": "^0.10.2",
     "csv-stringify": "^3.0.0",
     "jsonpath": "^1.0.0",

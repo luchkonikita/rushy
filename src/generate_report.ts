@@ -1,7 +1,8 @@
-import * as ora from 'ora'
 import { padStart } from 'lodash'
 
 import Config from './config'
+import InlineLogger from './loggers/inline'
+import SerialLogger from './loggers/serial'
 import CSVReporter from './reporters/csv'
 import HTMLReporter from './reporters/html'
 import Runner from './runner'
@@ -23,19 +24,18 @@ function splitIntoGroups(collection, groupSize): string[][] {
 }
 
 export default async function generateReport(configFile: string, destFileName: string) {
-  const spinner = ora('Launching Chrome').start()
-
-  process.on('SIGINT', async () => {
-    spinner.stopAndPersist({
-      symbol: '👹',
-      text: 'Interrupted'
-    })
-  })
-
   const config = new Config(configFile)
+  const logger = config.logger === 'inline' ? new InlineLogger() : new SerialLogger()
   const reporter = config.reporter === 'csv' ? new CSVReporter(config) : new HTMLReporter(config)
 
-  spinner.text = 'Starting pool of lighthouse workers'
+  // const spinner = ora('Launching Chrome').start()
+  logger.info('Launching Chrome')
+
+  process.on('SIGINT', async () => {
+    logger.error('Interrupted', { persist: true })
+  })
+
+  logger.info('Starting pool of lighthouse workers')
 
   const pool: Runner[] = []
 
@@ -58,17 +58,28 @@ export default async function generateReport(configFile: string, destFileName: s
 
   let processed = 0
   let remaining = config.urls.length
+  let reported
 
   function reportProgress() {
-    spinner.text = [
-      'Running pages audit',
-      '',
-      `  Concurrency     ${padStart(config.concurrency, 3)}`,
-      `  Total pages     ${padStart(config.urls.length, 3)}`,
-      '',
-      `  Processed pages ${padStart(processed, 3)}`,
-      `  Remaining pages ${padStart(remaining, 3)}`
-    ].join('\n')
+    if (reported === remaining) return
+
+    if (config.logger === 'inline') {
+      logger.info([
+        'Running pages audit',
+        '',
+        `  Concurrency     ${padStart(config.concurrency, 3)}`,
+        `  Total pages     ${padStart(config.urls.length, 3)}`,
+        '',
+        `  Processed pages ${padStart(processed, 3)}`,
+        `  Remaining pages ${padStart(remaining, 3)}`
+      ].join('\n'))
+    } else {
+      logger.info(
+        `Remaining pages: ${remaining}`
+      )
+    }
+
+    reported = remaining
   }
 
   for (const group of urlGroups) {
@@ -89,17 +100,14 @@ export default async function generateReport(configFile: string, destFileName: s
     )
   }
 
-  spinner.text = 'Shutting down workers'
+  logger.info('Shutting down workers')
 
   for (const worker of pool) {
     await worker.stop()
   }
 
-  spinner.text = 'Saving report'
+  logger.info('Saving report')
   const reportFileName = reporter.write(report, `${destFileName}.${reporter.ext}`)
 
-  spinner.stopAndPersist({
-    symbol: '⚡️',
-    text: `Report saved to ${reportFileName}`
-  })
+  logger.info(`Report saved to ${reportFileName}`, { persist: true })
 }
