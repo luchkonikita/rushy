@@ -18,24 +18,23 @@ yarn global add rushy
 rushy --config=/path/to/your/config.json
 ```
 
-Configuration .json file should look like:
+Configuration .json file should look something like:
 
 ```
 {
   "urls": ["http://example.com"],
   "storeDir": "./reports",
-  "skipAudits": ["speed-index-metric"],
-  "reporter": "html"
+  "reporter": "html",
+  "reportQuery": {
+    "Time to First Byte": "$.audits['time-to-first-byte'].rawValue"
+  }
 }
 ```
 
-Available reporters are `csv` and `html`.
-
-Make sure to provide configuration suitable for your needs.
+Make sure to provide configuration suitable for your needs. More info can be found [here](https://github.com/luchkonikita/rushy/blob/master/src/config.ts#L18).
 
 When completed, the audit will be stored as a .csv file.
 What do next is up to you. For example, you can:
 - commit reports to your git repository
 - upload somewhere
 - build historical data, charts, etc...
-

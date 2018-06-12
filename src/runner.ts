@@ -1,3 +1,4 @@
+import { query } from 'jsonpath'
 import * as chromeLauncher from 'chrome-launcher'
 import { getLighthouseReport } from './lighthouse'
 import { isNumber } from 'lodash'
@@ -24,10 +25,11 @@ export default class Runner {
     delete results.artifacts
 
     const urlReport: IAuditReport = {}
-    this.config.auditKeys.forEach(key => {
-      const data = results.audits[key] as IAudit
-      urlReport[key] = isNumber(data.rawValue) ? Math.round(data.rawValue) : data.rawValue
+    Object.keys(this.config.reportQuery).forEach(k => {
+      const value = query(results, this.config.reportQuery[k])[0]
+      urlReport[k] = isNumber(value) ? Math.round(value) : value
     })
+
     return urlReport
   }
 }

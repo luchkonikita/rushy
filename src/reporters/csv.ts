@@ -1,20 +1,19 @@
 import * as stringifyCSV from 'csv-stringify/lib/sync'
-import { humanize } from 'inflection'
 import BaseReporter from './base_reporter'
 
 export default class CSVReporter extends BaseReporter implements Reporter {
   write(report: ReportsList, destFileName: string): string {
-    const rows = Object.keys(report).sort().map(url => {
-      const results = this.config.auditKeys.map(key => report[url][key])
+    const urls = Object.keys(report).sort()
+    const reportKeys = Object.keys(this.config.reportQuery)
+    const header = ['Page'].concat(reportKeys)
+
+    const rows = urls.map(url => {
+      const results = reportKeys.map(key => report[url][key])
       return [url].concat(results)
     })
-    const csv = stringifyCSV([this.header].concat(rows), { header: true })
 
+    const csv = stringifyCSV([header].concat(rows), { header: true })
     return this.writeReport(csv, destFileName)
-  }
-
-  private get header(): string[] {
-    return ['Page'].concat(this.config.auditKeys.map(k => humanize(k.split('-').join(' ')))) // Header row
   }
 
   get ext(): string {

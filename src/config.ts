@@ -1,17 +1,19 @@
 import * as fs from 'fs'
 
-const DEFAULT_AUDITS = [
-  'time-to-first-byte',
-  'first-meaningful-paint',
-  'first-interactive',
-  'consistently-interactive',
-  'total-byte-weight',
-  'speed-index-metric'
-]
-
 const DEFAULT_CONFIG = {
-  skipAudits: [],
-  storeDir: 'tmp'
+  reporter: 'csv',
+  storeDir: 'tmp',
+  concurrency: 1,
+  reportQuery: {
+    'Score': '$.reportCategories[0].score',
+    'Time to First Byte': '$.audits["time-to-first-byte"].rawValue',
+    'First Meaningful Paint': '$.audits["first-meaningful-paint"].rawValue',
+    'First Interactive': '$.audits["first-interactive"].rawValue',
+    'Consistently Interactive': '$.audits["consistently-interactive"].rawValue',
+    'Total Byte Weight': '$.audits["total-byte-weight"].rawValue',
+    'Speed Index': '$.audits["speed-index-metric"].rawValue',
+    'Total Time': '$.timing.total'
+  }
 }
 
 /*
@@ -20,14 +22,21 @@ const DEFAULT_CONFIG = {
  * Expects a .json file with fields like:
  * ```
  *   {
- *    "urls": ["http://example.com"],
- *    "storeDir": "./reports",
- *    "skipAudits": ["speed-index-metric"],
- *    "reporter": "html"
+ *     "urls": ["http://example.com"],
+ *     "storeDir": "./reports",
+ *     "reporter": "html",
+ *     "reportQuery": {
+ *       "Time to First Byte": "$.audits['time-to-first-byte'].rawValue"
+ *     }
  *   }
  * ```
  *
- * Note that the default reporter is `csv`.
+ * Options:
+ * `urls` - the list of pages to run audits on.
+ * `storeDir` - the directory for storing reports.
+ * `concurrency` - the number of Chrome/Lighthouse processes to launch simultaneously.
+ * `reporter` - sets the report format. Can be `html` or `csv`.
+ * `reportQuery` - options allows you to specify custom query against lighthouse results. Suitable for advanced usage.
  *
  */
 
@@ -41,11 +50,6 @@ export default class Config {
 
   get urls(): string[] {
     return this.config.urls
-  }
-
-  get auditKeys(): string[] {
-    return DEFAULT_AUDITS
-      .filter(k => !this.config.skipAudits.includes(k))
   }
 
   get lighthouseOpts() {
@@ -63,12 +67,16 @@ export default class Config {
     }
   }
 
+  get reportQuery(): any {
+    return this.config.reportQuery
+  }
+
   get concurrency(): number {
-    return this.config.concurrency ? parseInt(this.config.concurrency, 10) : 1
+    return this.config.concurrency
   }
 
   get reporter(): 'csv' | 'html' {
-    return this.config.reporter || 'csv'
+    return this.config.reporter
   }
 
   get storeDir(): string {

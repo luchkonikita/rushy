@@ -12,6 +12,9 @@ test.beforeEach(t => {
   }
 
   t.context.lighthouseResultsStub = {
+    reportCategories: [
+      { score: 42 }
+    ],
     audits: {
       'time-to-first-byte': {
         rawValue: 'time-to-first-byte value'
@@ -30,7 +33,13 @@ test.beforeEach(t => {
       },
       'speed-index-metric': {
         rawValue: 'speed-index-metric value'
+      },
+      'very-custom-audit': {
+        rawValue: 'very-custom-audit value'
       }
+    },
+    timing: {
+      total: 100.2
     }
   }
 
@@ -51,8 +60,8 @@ test.serial('generate report', async t => {
 
   const expectedCsv = [
     // tslint:disable max-line-length
-    'Page,Time to first byte,First meaningful paint,First interactive,Consistently interactive,Total byte weight,Speed index metric',
-    'https://example.com,time-to-first-byte value,first-meaningful-paint value,first-interactive value,consistently-interactive value,total-byte-weight value,speed-index-metric value',
+    'Page,Score,Time to First Byte,First Meaningful Paint,First Interactive,Consistently Interactive,Total Byte Weight,Speed Index,Total Time',
+    'https://example.com,42,time-to-first-byte value,first-meaningful-paint value,first-interactive value,consistently-interactive value,total-byte-weight value,speed-index-metric value,100',
     ''
     // tslint:enable max-line-length
   ].join('\n')
@@ -61,13 +70,13 @@ test.serial('generate report', async t => {
   t.is(csv, expectedCsv)
 })
 
-test.serial('generate report with skipped audits', async t => {
-  await generateReport('./test/config_skipped.json', 'report_skipped')
-  const csv = fs.readFileSync('test/tmp/report_skipped.csv').toString()
+test.serial('generate report with custom query', async t => {
+  await generateReport('./test/config_custom_query.json', 'report_custom_query')
+  const csv = fs.readFileSync('test/tmp/report_custom_query.csv').toString()
 
   const expectedCsv = [
-    'Page,First meaningful paint,Total byte weight,Speed index metric',
-    'https://example.com,first-meaningful-paint value,total-byte-weight value,speed-index-metric value',
+    'Page,Score,Custom Audit',
+    'https://example.com,42,very-custom-audit value',
     ''
   ].join('\n')
 
@@ -78,6 +87,6 @@ test.serial('generate report with html reporter', async t => {
   await generateReport('./test/config_html.json', 'report_html')
   const html = fs.readFileSync('test/tmp/report_html.html').toString()
 
-  t.true(html.includes('<th>Time to first byte</th>'))
+  t.true(html.includes('<th>Time to First Byte</th>'))
   t.true(html.includes('<td>time-to-first-byte value</td>'))
 })

@@ -3,14 +3,7 @@ interface IAudit {
   rawValue: any
 }
 
-interface IAuditReport {
-  'time-to-first-byte'?: number
-  'first-meaningful-paint'?: number
-  'first-interactive'?: number
-  'consistently-interactive'?: number
-  'total-byte-weight'?: number
-  'speed-index-metric'?: number
-}
+type IAuditReport = { [index: string]: any }
 
 type ReportsList = { [index: string]: IAuditReport }
 
