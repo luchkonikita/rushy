@@ -1,0 +1,10 @@
+{
+    "urls": [
+        "https://example.com"
+    ],
+    "storeDir": "./test/tmp",
+    "reportQuery": {
+        "Score": "$.reportCategories[0].score",
+        "Custom Audit": "$.audits['very-custom-audit'].rawValue"
+    }
+}
