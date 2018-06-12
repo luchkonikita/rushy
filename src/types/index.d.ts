@@ -1,6 +1,6 @@
 interface IAudit {
   name: string
-  rawValue: number | boolean
+  rawValue: any
 }
 
 interface IAuditReport {

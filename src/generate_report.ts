@@ -1,53 +1,99 @@
-import * as chromeLauncher from 'chrome-launcher'
 import * as ora from 'ora'
-import { inflect } from 'inflection'
+import { padStart } from 'lodash'
 
 import Config from './config'
 import CSVReporter from './reporters/csv'
 import HTMLReporter from './reporters/html'
 import Runner from './runner'
 
+function splitIntoGroups(collection, groupSize): string[][] {
+  const results: string[][] = []
+  let start = 0
+  let end = groupSize
+  let group = collection.slice(start, end)
+
+  while (group.length > 0) {
+    results.push(group)
+    start += groupSize
+    end += groupSize
+    group = collection.slice(start, end)
+  }
+
+  return results
+}
+
 export default async function generateReport(configFile: string, destFileName: string) {
-  const spinner = ora('Lauching Chrome').start()
+  const spinner = ora('Launching Chrome').start()
 
-  const config = new Config(configFile)
-  const reporter = config.reporter === 'csv'
-    ? new CSVReporter(config)
-    : new HTMLReporter(config)
-  const chrome = await chromeLauncher.launch({ ...config.chromeOpts })
-
-  // Ensure Chrome is closed
   process.on('SIGINT', async () => {
     spinner.stopAndPersist({
       symbol: '👹',
       text: 'Interrupted'
     })
-
-    await chrome.kill()
   })
 
-  config.chromePort = chrome.port
+  const config = new Config(configFile)
+  const reporter = config.reporter === 'csv' ? new CSVReporter(config) : new HTMLReporter(config)
 
-  const runner = new Runner(config)
+  spinner.text = 'Starting pool of lighthouse workers'
+
+  const pool: Runner[] = []
+
+  // Kill Chrome processes on interruption
+  process.on('SIGINT', async () => {
+    for (const worker of pool) {
+      await worker.stop()
+    }
+  })
+
+  for (let i = 0; i <= config.concurrency; i++) {
+    const runner = new Runner(config)
+    await runner.start()
+    pool.push(runner)
+  }
+
+  const urlGroups = splitIntoGroups(config.urls, config.concurrency)
 
   const report: ReportsList = {}
+
   let processed = 0
   let remaining = config.urls.length
 
-  for (const url of config.urls) {
+  function reportProgress() {
     spinner.text = [
-      `Running audit on ${url}`,
+      'Running pages audit',
       '',
-      `  Processed: ${processed} ${inflect('page', processed)}`,
-      `  Remaining: ${remaining} ${inflect('page', remaining)}`
+      `  Concurrency     ${padStart(config.concurrency, 3)}`,
+      `  Total pages     ${padStart(config.urls.length, 3)}`,
+      '',
+      `  Processed pages ${padStart(processed, 3)}`,
+      `  Remaining pages ${padStart(remaining, 3)}`
     ].join('\n')
-
-    report[url] = await runner.runAudit(url)
-    remaining--
-    processed++
   }
 
-  await chrome.kill()
+  for (const group of urlGroups) {
+    await Promise.all(
+      group.map(async (url, i) => {
+        reportProgress()
+
+        try {
+          report[url] = await pool[i].runAudit(url)
+        } catch (error) {
+          report[url] = {}
+        }
+
+        remaining--
+        processed++
+        reportProgress()
+      })
+    )
+  }
+
+  spinner.text = 'Shutting down workers'
+
+  for (const worker of pool) {
+    await worker.stop()
+  }
 
   spinner.text = 'Saving report'
   const reportFileName = reporter.write(report, `${destFileName}.${reporter.ext}`)

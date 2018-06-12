@@ -7,7 +7,7 @@ const template = path.join(process.cwd(), 'templates', 'html.pug')
 
 export default class HTMLReporter extends BaseReporter implements Reporter {
   write(report: ReportsList, destFileName: string): string {
-    const rows = Object.keys(report).map(url => {
+    const rows = Object.keys(report).sort().map(url => {
       const results = this.config.auditKeys.map(key => report[url][key])
       return [url].concat(results)
     })

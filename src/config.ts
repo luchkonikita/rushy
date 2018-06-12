@@ -32,7 +32,6 @@ const DEFAULT_CONFIG = {
  */
 
 export default class Config {
-  chromePort: number
   private config: any
 
   constructor(configFile) {
@@ -60,8 +59,12 @@ export default class Config {
 
   get chromeOpts() {
     return {
-      chromeFlags: ['--disable-gpu', '--show-paint-rects', '--headless', '--no-sandbox']
+      chromeFlags: ['--disable-gpu', '--headless', '--no-sandbox']
     }
+  }
+
+  get concurrency(): number {
+    return this.config.concurrency ? parseInt(this.config.concurrency, 10) : 1
   }
 
   get reporter(): 'csv' | 'html' {

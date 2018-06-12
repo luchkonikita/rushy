@@ -57,7 +57,7 @@ test.serial('generate report', async t => {
     // tslint:enable max-line-length
   ].join('\n')
 
-  t.true(t.context.chromeStub.kill.calledOnce)
+  t.true(t.context.chromeStub.kill.called)
   t.is(csv, expectedCsv)
 })
 
