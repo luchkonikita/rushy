@@ -2,7 +2,8 @@ import * as path from 'path'
 import * as pug from 'pug'
 import BaseReporter from './base_reporter'
 
-const template = path.join(process.cwd(), 'templates', 'html.pug')
+// We're resolving from '/dest/src/reporters' to '/templates'
+const template = path.join(__dirname, '../../../templates', 'html.pug')
 
 export default class HTMLReporter extends BaseReporter implements Reporter {
   write(report: ReportsList, destFileName: string): string {

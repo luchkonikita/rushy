@@ -17,7 +17,8 @@
       "esnext.asynciterable",
       "es2017",
       "dom"
-    ]
+    ],
+    "removeComments": true
   },
   "exclude": [
     "dest",
