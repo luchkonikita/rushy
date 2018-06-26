@@ -40,7 +40,8 @@
   },
   "ava": {
     "files": [
-      "dest/test/index.js"
+      "dest/test/index.js",
+      "dest/test/get_even_slice.js"
     ]
   }
 }
