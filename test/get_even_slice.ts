@@ -1,19 +1,19 @@
 import { test } from 'ava'
 import getEvenSlice from '../src/helpers/get_even_slice'
 
-const list: string[] = ['1','2','3','4','5','6']
+const list: string[] = ['1', '2', '3', '4', '5', '6']
 
 test('slice evenly when modulo = 0', t => {
-  t.deepEqual(getEvenSlice(list, 3, 0), ['1','2'])
-  t.deepEqual(getEvenSlice(list, 3, 1), ['3','4'])
-  t.deepEqual(getEvenSlice(list, 3, 2), ['5','6'])
+  t.deepEqual(getEvenSlice(list, 3, 0), ['1', '2'])
+  t.deepEqual(getEvenSlice(list, 3, 1), ['3', '4'])
+  t.deepEqual(getEvenSlice(list, 3, 2), ['5', '6'])
 })
 
 test('slice evenly when remainder is non-zero', t => {
-  const largeList: string[] = ['1','2','3','4','5','6','7','8']
-  t.deepEqual(getEvenSlice(largeList, 3, 0), ['1','2','3'])
-  t.deepEqual(getEvenSlice(largeList, 3, 1), ['4','5','6'])
-  t.deepEqual(getEvenSlice(largeList, 3, 2), ['7','8'])
+  const largeList: string[] = ['1', '2', '3', '4', '5', '6', '7', '8']
+  t.deepEqual(getEvenSlice(largeList, 3, 0), ['1', '2', '3'])
+  t.deepEqual(getEvenSlice(largeList, 3, 1), ['4', '5', '6'])
+  t.deepEqual(getEvenSlice(largeList, 3, 2), ['7', '8'])
 })
 
 test('return empty list for an empty list', t => {
