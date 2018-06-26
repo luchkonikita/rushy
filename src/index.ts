@@ -18,8 +18,8 @@ const argv = optimist
       throw new Error('--worker-count must be >= 1')
     }
 
-    if (options.worker >= options['worker-count']) {
-      throw new Error('--worker must be < --worker-count')
+    if (options.worker < 0 || options.worker >= options['worker-count']) {
+      throw new Error('--worker must be < --worker-count && > 0')
     }
 
     return true
