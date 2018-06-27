@@ -55,7 +55,7 @@ test.afterEach(t => {
 })
 
 test.serial('generate report', async t => {
-  await generateReport('./test/config_all.json', 'report_all')
+  await generateReport('./test/config_all.json', 'report_all', 0, 1)
   const csv = fs.readFileSync('test/tmp/report_all.csv').toString()
 
   const expectedCsv = [
@@ -71,7 +71,7 @@ test.serial('generate report', async t => {
 })
 
 test.serial('generate report with custom query', async t => {
-  await generateReport('./test/config_custom_query.json', 'report_custom_query')
+  await generateReport('./test/config_custom_query.json', 'report_custom_query', 0, 1)
   const csv = fs.readFileSync('test/tmp/report_custom_query.csv').toString()
 
   const expectedCsv = [
@@ -84,7 +84,7 @@ test.serial('generate report with custom query', async t => {
 })
 
 test.serial('generate report with html reporter', async t => {
-  await generateReport('./test/config_html.json', 'report_html')
+  await generateReport('./test/config_html.json', 'report_html', 0, 1)
   const html = fs.readFileSync('test/tmp/report_html.html').toString()
 
   t.true(html.includes('<th>Time to First Byte</th>'))
