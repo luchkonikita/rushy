@@ -16,13 +16,6 @@ export default async function generateReport(configFile: string,
   const reporter = config.reporter === 'csv' ? new CSVReporter(config) : new HTMLReporter(config)
 
   const report: ReportsList = {}
-
-  process.on('SIGINT', async () => {
-    logger.error('Interrupted', { persist: true })
-    // Kill Chrome processes on interruption
-    await runner.stop()
-  })
-
   const urlSlice = getEvenSlice(config.urls, workerCount, worker)
   const progressLogger = new ProgressLogger(urlSlice, config.logger, logger)
 
@@ -36,6 +29,12 @@ export default async function generateReport(configFile: string,
   logger.info('Launching Chrome')
   const runner = new Runner(config)
   await runner.start()
+
+  process.on('SIGINT', async () => {
+    logger.error('Interrupted', { persist: true })
+    // Kill Chrome processes on interruption
+    await runner.stop()
+  })
 
   for (const url of urlSlice) {
     progressLogger.update(url)
