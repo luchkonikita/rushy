@@ -29,7 +29,7 @@ const argv = optimist
 const configFileName = argv.config
 const workerCount = argv['worker-count']
 const worker = argv.worker
-const destFileName = (new Date()).toISOString()
+const destFileName = (workerCount > 1 ? `worker_${worker}_` : '') + (new Date()).toISOString()
 
 generateReport(configFileName, destFileName, worker, workerCount)
   .then(() => process.exit())

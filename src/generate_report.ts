@@ -16,9 +16,17 @@ export default async function generateReport(configFile: string,
   const reporter = config.reporter === 'csv' ? new CSVReporter(config) : new HTMLReporter(config)
 
   const report: ReportsList = {}
+  const urlSlice = getEvenSlice(config.urls, workerCount, worker)
+  const progressLogger = new ProgressLogger(urlSlice, config.logger, logger)
+
+  if (urlSlice.length === 0) {
+    logger.info(`No URLs to process for worker=${worker} of workerCount=${workerCount}, shutting down`)
+    process.exit(0)
+  }
+
+  logger.info(`Starting processing ${urlSlice.length} URLs`)
 
   logger.info('Launching Chrome')
-
   const runner = new Runner(config)
   await runner.start()
 
@@ -27,11 +35,6 @@ export default async function generateReport(configFile: string,
     // Kill Chrome processes on interruption
     await runner.stop()
   })
-
-  const urlSlice = getEvenSlice(config.urls, workerCount, worker)
-  const progressLogger = new ProgressLogger(urlSlice, config.logger, logger)
-
-  logger.info(`Starting processing ${urlSlice.length} URLs`)
 
   for (const url of urlSlice) {
     progressLogger.update(url)
