@@ -1,6 +1,6 @@
 {
   "name": "rushy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dest/index.js",
   "author": "Nikita Luchko",
   "license": "MIT",
