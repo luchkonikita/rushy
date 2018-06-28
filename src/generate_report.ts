@@ -17,11 +17,6 @@ export default async function generateReport(configFile: string,
 
   const report: ReportsList = {}
 
-  logger.info('Launching Chrome')
-
-  const runner = new Runner(config)
-  await runner.start()
-
   process.on('SIGINT', async () => {
     logger.error('Interrupted', { persist: true })
     // Kill Chrome processes on interruption
@@ -31,7 +26,16 @@ export default async function generateReport(configFile: string,
   const urlSlice = getEvenSlice(config.urls, workerCount, worker)
   const progressLogger = new ProgressLogger(urlSlice, config.logger, logger)
 
+  if (urlSlice.length === 0) {
+    logger.info(`No URLs to process for worker=${worker} of workerCount=${workerCount}, shutting down`)
+    process.exit(0)
+  }
+
   logger.info(`Starting processing ${urlSlice.length} URLs`)
+
+  logger.info('Launching Chrome')
+  const runner = new Runner(config)
+  await runner.start()
 
   for (const url of urlSlice) {
     progressLogger.update(url)
